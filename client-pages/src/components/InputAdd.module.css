@@ -1,0 +1,35 @@
+.Container {
+  gap: 16px;
+  padding: 8px;
+  display: flex;
+}
+
+.Input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #00000025;
+  border-radius: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.Button {
+  border: none;
+  padding: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  background: linear-gradient(90deg, #2e8b57, #3cb371);
+}
+
+.Button:hover {
+  background: linear-gradient(90deg, #34985f, #43cd81);
+}
+
+.Button:active {
+  background: linear-gradient(90deg, #3a8d5e, #4cb27a);
+}

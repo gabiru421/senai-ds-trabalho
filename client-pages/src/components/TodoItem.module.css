@@ -1,0 +1,60 @@
+.Item {
+  gap: 4px;
+  padding: 8px;
+  display: flex;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Item:hover {
+  background-color: antiquewhite;
+}
+
+.Item[data-complete="true"] .Text {
+  text-decoration: line-through;
+}
+
+.ButtonsGroup {
+  gap: 4px;
+  display: flex;
+}
+
+.ButtonComplete {
+  border: none;
+  padding: 8px;
+  color: white;
+  cursor: pointer;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-radius: 100px;
+  background-color: green;
+}
+
+.ButtonComplete:hover {
+  background-color: rgb(21, 151, 21);
+}
+
+.ButtonComplete:active {
+  background-color: rgb(58, 172, 58);
+}
+
+.ButtonRemove {
+  border: none;
+  padding: 8px;
+  color: white;
+  cursor: pointer;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-radius: 100px;
+  text-decoration: none;
+  background-color: red;
+}
+
+.ButtonRemove:hover {
+  background-color: #ff3838;
+}
+
+.ButtonRemove:active {
+  background-color: #ff4747;
+}
