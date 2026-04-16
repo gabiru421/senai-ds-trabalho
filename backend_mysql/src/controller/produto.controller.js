@@ -15,12 +15,12 @@ export const getAllProduto = (_, res) => {
 export const addProduto = (req, res) => {
   console.log("addProduto");
   const q =
-    "INSERT INTO produto(`nome`, `codigo_barra`, `preco_venda` , `estoque`, `ativo`, `criado_em`) VALUES(?)";
+    "INSERT INTO produto(`nome`, `codigo_barras`, `preco` , `estoque`, `ativo`, `criado_em`) VALUES(?)";
 
   const values = [
     req.body.nome,
-    req.body.codigo_barra,
-    req.body.preco_venda,
+    req.body.codigo_barras,
+    req.body.preco,
     req.body.estoque,
     req.body.ativo,
     req.body.criado_em,
@@ -38,12 +38,12 @@ export const addProduto = (req, res) => {
 export const updateProduto = (req, res) => {
   console.log("updateProduto");
   const q =
-    "UPDATE users SET `nome` = ?, `codigo_barra` = ?, `preco_venda` = ? , `estoque` = ?, `ativo` = ?, `criado_em` = ? WHERE `idproduto` = ?";
+    "UPDATE users SET `nome` = ?, `codigo_barras` = ?, `preco` = ? , `estoque` = ?, `ativo` = ?, `criado_em` = ? WHERE `idproduto` = ?";
 
   const values = [
     req.body.nome,
-    req.body.codigo_barra,
-    req.body.preco_venda,
+    req.body.codigo_barras,
+    req.body.preco,
     req.body.estoque,
     req.body.ativo,
     req.body.criado_em,

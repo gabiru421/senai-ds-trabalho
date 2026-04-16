@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
+import api from "../../services/api";
+import Toast from "../../components/ui/Toast";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -24,24 +27,48 @@ const style = {
   borderRadius: 10,
 };
 
+
+
 export default function ProductList() {
+  const [rows, setRows] = useState([]);
   const [products, setProducts] = useState([
     {
-      id: 1,
-      name: "iPhone 11",
-      stock: 10,
-      min: 5,
-      max: 30,
+      nome: "",
+      codigo_barras: "",
+      preco: "",
+      estoque: "",
+      min: "",
+      max: "",
+      ativo: true,
     },
   ]);
+  
+  const fetchProducts = async () => {
+    try {
+      const res = await api.get("/produto");
+      setRows(res.data)
+      console.log(res.data)
+    } catch {
+      // showToast("Erro ao buscar produtos", "error");
+      console.error("Erro ao buscar produtos", "error");
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
-    id: null,
-    name: "",
-    stock: "",
+    idproduto: null,
+    nome: "",
+    codigo_barras: "",
+    preco: "",
+    estoque: "",
     min: "",
     max: "",
+    ativo: true,
   });
 
   // abrir modal
@@ -49,7 +76,7 @@ export default function ProductList() {
     if (product) setForm(product);
     else
       setForm({
-        id: null,
+        idproduto: null,
         name: "",
         stock: "",
         min: "",
@@ -65,47 +92,66 @@ export default function ProductList() {
   const handleSave = () => {
     const formatted = {
       ...form,
-      stock: Number(form.stock),
+      preco: Number(form.preco),
+      estoque: Number(form.estoque),
       min: Number(form.min),
       max: Number(form.max),
     };
-
+  
     if (form.id) {
       setProducts(products.map((p) => (p.id === form.id ? formatted : p)));
     } else {
-      setProducts([
-        ...products,
-        { ...formatted, id: Date.now() },
-      ]);
+      setProducts([...products, { ...formatted, id: Date.now() }]);
     }
-
+  
     handleClose();
   };
-
   // deletar
   const handleDelete = (id) => {
     setProducts(products.filter((p) => p.id !== id));
   };
 
-  // status estoque
-  const getStatus = (row) => {
-    if (row.stock < row.min)
-      return <Chip label="Baixo" color="error" size="small" />;
-
-    if (row.stock > row.max)
-      return <Chip label="Alto" color="warning" size="small" />;
-
-    return <Chip label="Normal" color="success" size="small" />;
+  const handleCreate = async () => {
+    try {
+      await api.post("/produto", newUser);
+      showToast("Produto criado com sucesso");
+      setOpenCreateModal(false);
+      setNewUser({
+        nome: "",
+        codigo_barras: "",
+        preco: "",
+        estoque: "",
+        min: "",
+        max: "",
+        ativo: true,
+      });
+      fetchUsers();
+    } catch {
+      showToast("Erro ao criar usuário", "error");
+    }
   };
 
+  // status estoque
+  const getStatus = (row) => {
+    if (row.estoque < row.min)
+      return <Chip label="Baixo" color="error" size="small" />;
+  
+    if (row.estoque > row.max)
+      return <Chip label="Alto" color="warning" size="small" />;
+  
+    return <Chip label="Normal" color="success" size="small" />;
+  };
+  
   const columns = [
-    { field: "name", headerName: "Produto", flex: 1 },
+    { field: "nome", headerName: "Produto", flex: 1 },
 
-    { field: "stock", headerName: "Estoque", flex: 1 },
+    { field: "codigo_barras", headerName: "Codigo Barras", flex: 1 },
 
-    { field: "min", headerName: "Mínimo", flex: 1 },
+    { field: "preco", headerName: "Preço", flex: 1 },
 
-    { field: "max", headerName: "Máximo", flex: 1 },
+    { field: "estoque", headerName: "Estoque", flex: 1 },
+    
+    { field: "ativo", headerName: "ativo", flex: 1 },
 
     {
       field: "status",
@@ -143,7 +189,11 @@ export default function ProductList() {
       </Button>
 
       <Box mt={2} style={{ height: 400 }}>
-        <DataGrid rows={products} columns={columns} />
+        <DataGrid rows={rows}
+        columns={columns}
+        getRowId={(row) => row.idprodutos}
+        />
+
       </Box>
 
       {/* Modal */}
@@ -195,6 +245,37 @@ export default function ProductList() {
               setForm({ ...form, max: e.target.value })
             }
           />
+
+<TextField
+  fullWidth
+  label="Nome"
+  margin="normal"
+  value={form.nome}
+  onChange={(e) =>
+    setForm({ ...form, nome: e.target.value })
+  }
+/>
+
+<TextField
+  fullWidth
+  label="Código de Barras"
+  margin="normal"
+  value={form.codigo_barras}
+  onChange={(e) =>
+    setForm({ ...form, codigo_barras: e.target.value })
+  }
+/>
+
+<TextField
+  fullWidth
+  label="Preço"
+  type="number"
+  margin="normal"
+  value={form.preco}
+  onChange={(e) =>
+    setForm({ ...form, preco: e.target.value })
+  }
+/>
 
           <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
             <Button onClick={handleClose}>Cancelar</Button>
