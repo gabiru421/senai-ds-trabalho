@@ -12,7 +12,7 @@ export const getAllEstoque = (_, res) => {
 }
 
 
-
+//ADD
 export const addEstoque = (req, res) => {
   console.log("addEstoque");
   const q =
