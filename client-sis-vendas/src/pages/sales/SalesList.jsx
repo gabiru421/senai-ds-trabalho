@@ -47,8 +47,18 @@ export default function SalesList() {
   const fetchProducts = async () => {
     try {
       const res = await api.get("/products");
-      setProducts(res.data);
-      setFiltered(res.data);
+  
+      // 
+      
+      const produtosFormatados = res.data.map((p) => ({
+        id: p.idprodutos,   // 
+        nome: p.nome,
+        preco: p.preco,
+      }));
+  
+      setProducts(produtosFormatados);
+      setFiltered(produtosFormatados);
+  
     } catch {
       showToast("Erro ao buscar produtos", "error");
     }
@@ -57,6 +67,32 @@ export default function SalesList() {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  //busca manual
+
+  const handleSearchEnter = (e) => {
+    if (e.key === "Enter") {
+      const termo = search.trim().toLowerCase();
+  
+      if (!termo) return;
+  
+    
+      const produto = products.find(
+        (p) =>
+          p.nome.toLowerCase() === termo || // nome exato
+          p.nome.toLowerCase().includes(termo) // ou parcial
+      );
+  
+      if (produto) {
+        addToCart(produto);
+        setSearch(""); // limpa campo
+      } else {
+        showToast("Produto não encontrado");
+      }
+    }
+  };
+
+  
 
   // 🔍 busca
   useEffect(() => {
@@ -68,8 +104,12 @@ export default function SalesList() {
 
   // ➕ adicionar no carrinho
   const addToCart = (product) => {
+    if (!product.id) {
+      return showToast("Produto inválido", "error");
+    }
+  
     const existing = cart.find((item) => item.id === product.id);
-
+  
     if (existing) {
       setCart(
         cart.map((item) =>
@@ -112,18 +152,26 @@ export default function SalesList() {
   // ✅ finalizar
   const handleFinishSale = async () => {
     try {
-      await api.post("/sales", {
-        itens: cart,
-        total,
-        desconto: discount,
-        pagamento: payment,
-      });
-
+      for (const item of cart) {
+        const venda = {
+          usuario_id: 1,
+          total: item.preco * item.quantidade,
+          desconto: 0,
+          data_venda: new Date().toISOString().slice(0, 19).replace("T", " "),
+          produtoID: item.id,
+        };
+  
+        await api.post("/vendas", venda);
+      }
+  
       showToast("Venda realizada com sucesso");
-      setOpenConfirm(false);
+  
       setCart([]);
       setDiscount(0);
-    } catch {
+      setOpenConfirm(false);
+  
+    } catch (error) {
+      console.error(error);
       showToast("Erro ao finalizar venda", "error");
     }
   };

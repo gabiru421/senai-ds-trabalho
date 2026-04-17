@@ -15,8 +15,12 @@ export const getAllVendas = (_, res) => {
 
 export const addVendas = (req, res) => {
   console.log("addVendas");
-  const q =
-    "INSERT INTO vendas(`idvendas`, `usuario_id`, `total`, `desconto`, `data_venda`, `produtoID`) VALUES(?)";
+
+  const q = `
+    INSERT INTO vendas 
+    (usuario_id, total, desconto, data_venda, produtoID) 
+    VALUES (?, ?, ?, ?, ?)
+  `;
 
   const values = [
     req.body.usuario_id,
@@ -26,10 +30,10 @@ export const addVendas = (req, res) => {
     req.body.produtoID,
   ];
 
-  db.query(q, [values], (err) => {
+  db.query(q, values, (err) => {
     if (err) return res.json(err);
 
-    return res.status(200).json("Vendas criado com sucesso.");
+    return res.status(200).json("Venda criada com sucesso.");
   });
 };
 
@@ -39,24 +43,31 @@ export const addVendas = (req, res) => {
 
 export const updateVendas = (req, res) => {
   console.log("updateVendas");
-  const q =
-    "UPDATE vendas SET `idvendas` = ?, `usuario_id` = ?, `total` = ?, `desconto` = ?, `data_venda` = ?, `produtoID` = ? WHERE `idvendas` = ?";
+
+  const q = `
+    UPDATE vendas SET 
+      usuario_id = ?, 
+      total = ?, 
+      desconto = ?, 
+      data_venda = ?, 
+      produtoID = ?
+    WHERE idvendas = ?
+  `;
 
   const values = [
     req.body.usuario_id,
     req.body.total,
     req.body.desconto,
     req.body.data_venda,
-    req.body.produtoID,  ];
+    req.body.produtoID,
+  ];
 
   db.query(q, [...values, req.params.id], (err) => {
     if (err) return res.json(err);
 
-    return res.status(200).json("Vendas atualizado com sucesso.");
+    return res.status(200).json("Venda atualizada com sucesso.");
   });
 };
-
-
 
 
 
